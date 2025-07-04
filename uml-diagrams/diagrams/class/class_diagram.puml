@@ -17,4 +17,5 @@ class PremiumCustomer {
 Customer "1" -- "O..*" Order: 
 places
 Customer <|-- PremiumCustomer 
+
 @enduml
