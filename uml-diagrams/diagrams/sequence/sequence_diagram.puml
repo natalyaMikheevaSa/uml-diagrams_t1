@@ -1,0 +1,46 @@
+@startuml
+actor Пользователь
+participant "Мобильное Приложение" as MobileApp
+participant "Сервер" as Server
+participant "База Данных" as DB
+Пользователь -> MobileApp: Ввод логина и пароля
+activate MobileApp
+MobileApp -> MobileApp: Валидация ввода
+alt Ввод корректный
+ MobileApp -> Server: Запрос авторизации: логин, пароль
+ activate Server
+ Server -> DB: Запрос данных пользователя
+ activate DB
+ alt Логин найден
+ DB --> Server: Данные пользователя
+ deactivate DB
+ Server -> Server: Проверка пароля
+ alt Пароль верный
+  Server -> Server: Генерация токена
+  Server -> DB: Определение прав доступа для пользователя
+  activate DB
+  DB --> Server: Права доступа
+  deactivate DB
+  Server -> Server: Сохранение токена и прав доступа в сессии/хранилище
+  Server --> MobileApp: Токен и права доступа
+  MobileApp -> MobileApp: Сохранение токена и прав доступа
+  MobileApp -> Пользователь: Успешная авторизация
+  deactivate MobileApp
+ else Пароль неверный
+  Server --> MobileApp: Ошибка авторизации: неверный логин или пароль
+  MobileApp -> Пользователь: Ошибка авторизации
+  deactivate MobileApp
+ end
+ else Логин не найден
+ DB --> Server: Пользователь не найден
+ deactivate DB
+ Server --> MobileApp: Ошибка авторизации: пользователь не найден
+ MobileApp -> Пользователь: Ошибка авторизации
+ deactivate MobileApp
+ end
+ deactivate Server
+else Ввод некорректный
+ MobileApp -> Пользователь: Ошибка ввода
+ deactivate MobileApp
+end
+@endum
