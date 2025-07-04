@@ -1,0 +1,14 @@
+@startuml
+
+actor User
+
+usecase "Обновление приложения" as UpdateApp
+usecase "Проверка наличия обновлений" as CheckUpdates
+usecase "Загрузка обновлений" as DownloadUpdate
+
+User --> CheckUpdates : Проверяет наличие новой версии
+CheckUpdates --> UpdateApp : Подтверждает доступность обновления
+UpdateApp --> DownloadUpdate : Загружает новое обновление
+DownloadUpdate --> User : Завершил обновление
+
+@enduml
