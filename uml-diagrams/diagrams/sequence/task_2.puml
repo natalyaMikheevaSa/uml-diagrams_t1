@@ -1,0 +1,51 @@
+@startuml
+
+skinparam actor {
+BackgroundColor #95C8D8
+BorderColor Black
+}
+skinparam participant {
+BackgroundColor #F0F0F0 
+BorderColor Green
+}
+skinparam database {
+BackgroundColor #FFD700
+BorderColor Black
+}
+skinparam sequenceMessageAlign left
+actor Покупатель  as C 
+participant "Интерфейс сайта магазина" as UI
+participant "Контроллер обработки заказов" as OC
+participant "Платежный сервис" as PS
+database "База данных" as DB
+participant "Сервис Уведомлений" as NS
+activate C
+group "1. Оформление заказа"
+    C-> UI: Запрос на оформление заказа (детали заказа)
+    activate UI
+    UI-> OC: Передача данных заказа (детали заказа)
+    activate OC
+    OC -> DB: Сохранение заказа (детали заказа)
+    activate DB
+    DB -[#green]-> OC: Результат сохранения заказа
+    deactivate DB
+end
+group "2. Оплата"
+    OC -> PS: Проведение платежа (информация о платеже)
+    activate PS
+    alt Успешная оплата
+        PS -[#green]-> OC: Результат платежа 
+        OC -[#lightblue]->> NS : Отправка уведомления (идентификатор заказа)
+    else Ошибка оплаты
+        PS -[#red]-> OC: Сообщение об ошибке платежа
+        deactivate PS
+    end 
+end 
+group "3. Подтверждение"
+    OC --> UI: Подтверждение (детали подтверждения)
+    deactivate OC
+    UI --> C: Информирование покупателя (детали подтверждения)
+    deactivate UI
+end
+deactivate C
+@enduml
