@@ -1,21 +1,49 @@
-@startuml 
-class Customer {
-- name: String
-- email: String
-+ placeOrder(): void
-}
-class Order {
-- orderld: int
-- date: Date
-+ calculate Total(): double
+@startuml
+
+abstract class Payment {
+  - amount: BigDecimal
+  - paymentDate: Date
+  - transactionId: String
+  + getAmount(): BigDecimal
+  + getPaymentDate(): Date
+  + getTransactionId(): String
+  + setAmount(amount: BigDecimal)
+  + setPaymentDate(date: Date)
+  + setTransactionId(id: String)
+  + {abstract} processPayment()
 }
 
-class PremiumCustomer { 
-+ getRewards(): void
+class CashPayment {
+  - cashProvided: BigDecimal
+  + getCashProvided(): BigDecimal
+  + setCashProvided(amount: BigDecimal)
+  + calculateChange(): BigDecimal
+  + processPayment()
 }
 
-Customer "1" -- "O..*" Order: 
-places
-Customer <|-- PremiumCustomer 
+class CardPayment {
+  - cardNumber: String
+  - cardHolder: String
+  - expiryDate: String
+  + getCardNumber(): String
+  + getCardHolder(): String
+  + getExpiryDate(): String
+  + setCardNumber(number: String)
+  + setCardHolder(name: String)
+  + setExpiryDate(date: String)
+  + validateCard(): boolean
+  + processPayment()
+}
+
+class PaymentManager {
+  - payments: List<Payment>
+  + addPayment(payment: Payment)
+  + processAllPayments()
+  + getPayments(): List<Payment>
+}
+
+Payment <|-- CashPayment
+Payment <|-- CardPayment
+PaymentManager o-- Payment
 
 @enduml
