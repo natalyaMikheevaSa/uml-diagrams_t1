@@ -1,0 +1,108 @@
+@startuml
+
+
+class Customer {
+  -customerId: Integer
+  -name: String
+  -orders: List <Order> 
+}
+
+class Employee {
+  -empId: Integer
+  -empName: String
+  -department: Department
+  +getEmployeeInfo(): String
+}
+
+class House {
+  -houseId: Integer
+  -address: String
+}
+
+class Room {
+  -roomId: Integer
+  -roomName: String
+}
+
+class Order {
+  -orderId: Integer
+  -orderDate: Date
+  -items: List <Item> 
+  +calculateTotal(): Double
+}
+
+class Item {
+  -itemId: Integer
+  -itemName: String
+  -price: Double
+}
+
+
+class Manager {
+  -bonus: Double
+  +getManagerInfo(): String
+}
+
+class User {
+  -userId: Integer
+  -userName: String
+  -profile : Profile
+  +getUserDetails(): String
+}
+
+class Student {
+  -studentId: Integer
+}
+
+class Profile {
+  -profileId: Integer
+  -bio: String
+  -avatarUrl: String
+  +getProfileSummary(): String
+}
+
+
+class Course {
+  -courseId: Integer
+  -courseName: String
+}
+
+class Enrollment {
+  
+  -enrollmentDate: Date
+  -grade: String
+  
+}
+
+
+class Department {
+  -deptId: Integer
+  -deptName: String
+  +getDepartmentInfo(): String
+}
+
+
+class PaymentProcessor {
+  +processPayment(): Boolean
+}
+
+
+User <|-- Student: наследование (студент - подтип пользователя) 
+User "1" --> "0..1" Profile : содержит профиль (ассоциация, 0..1)  
+Customer "1" -- "0..*" Order : клиент размещает заказы (ассоциация, 0..*)
+Order "1" *-- "1..*" Item : заказ содержит элементы (композиция, 1..*)
+Order ..> PaymentProcessor: заказ использует процессор платежей (зависимость)
+Employee "1"-- "0..*" Customer: сотрудник обслуживает клиента  
+Customer "1"--> "1" User: клиент имеет учетную запись (ассоциация, связь между модулями)
+Order "0..1"--> Employee: заказ обрабатывается сотрудником (ассоциация, 0..1) 
+Employee "1" --> "0..1" House : сотрудник владеет домом (ассоциация, относительная 0..1)  
+House "1" o-- "1..*" Room : дом состоит из комнат (агрегация, 1..*)
+Employee "1" --> "1" Department : сотрудник пренадлежит отделу (ассоциация, обязательная связь)  
+Employee <|--  Manager : наследование (менеджер - подтип сотрудника)
+Enrollment "1" -- "1" Course : зачисление относится к конкретному курсу (ассоциация,1)
+Manager "1" --> "1" Department : менеджер управляет отделом (ассоциация, роль) 
+Course --> Department : курс предложен отделом (ассоциация, связь)  
+Student "1" -- "0..*" Enrollment : студент зачисляется на курсы (ассоциация,0..*)
+User ..> PaymentProcessor: пользователь инициирует платеж (зависимость) 
+
+@enduml
