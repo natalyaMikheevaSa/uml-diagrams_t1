@@ -1,0 +1,49 @@
+@startuml
+left to right direction
+actor "Клиент" as Client 
+actor "Кредитный менеджер" as Manager
+actor "Служба безопасности" as Security
+actor "Бюро кредитных историй" as  BKI
+
+rectangle "Процесса рассмотрения кредитной заявки" {
+(Подать заявку на кредит) as UC1 
+(Проверить данные клиента) as UC2
+(Запросить кредитную историю) as UC3 
+(Принять решение по заявке) as UC4
+(Уведомить клиента о решении) as UC5
+(Запросить дополнительные документы) as UC6
+(Отклонить заявку) as UC7
+(Одобрить заявку) as UC8
+}
+
+Client --> UC1
+
+Manager --> UC2
+
+Manager --> UC4
+
+Manager --> UC5
+
+Security --> UC2
+
+BKI --> UC3
+
+
+UC1 --> UC2: include
+
+UC2 --> UC3 : include
+
+UC4 --> UC5 : include
+
+UC4 --> UC7 : extend (если заявка отклонена)
+
+UC4 --> UC8 : extend (если заявка одобрена)
+
+UC2 --> UC6 : extend (при необходимости)
+
+
+UC7 --|> UC4
+
+UC8 --|> UC4
+
+@enduml
