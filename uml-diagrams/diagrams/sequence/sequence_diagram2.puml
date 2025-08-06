@@ -1,0 +1,44 @@
+@startuml
+autonumber
+actor Клиент as Client#LightPink
+participant "Мобильное приложение" as App
+participant "Бэкенд" as Backend
+participant "База данных" as DB
+participant "СМС-сервис" as SMS
+
+Client -> App: Запрос на перевод (сумма, получатель)
+activate App
+
+App -> Backend: Отправка данных перевода
+activate Backend
+
+Backend -> DB: Проверить баланс отправителя
+activate DB
+DB --> Backend: Информация о балансе
+deactivate DB
+
+alt Баланс достаточен
+    Backend -> DB: Списать сумму с отправителя
+    activate DB
+    DB --> Backend: Подтверждение списания
+    deactivate DB
+    
+    Backend -> DB: Зачислить сумму получателю
+    activate DB
+    DB --> Backend: Подтверждение зачисления
+    deactivate DB
+    
+    Backend ->> SMS: Асинхронный запрос на СМС-уведомление
+       
+    opt Успешный перевод
+        Backend --> App: Уведомление об успехе
+        App --> Client: Показать результат
+    end
+else Баланс недостаточен
+    Backend --> App: Ошибка "Недостаточно средств"
+    deactivate Backend
+    App --> Client: Показать ошибку
+    deactivate Ap
+end
+
+@enduml
